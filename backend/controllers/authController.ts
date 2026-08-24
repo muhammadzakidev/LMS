@@ -1,5 +1,5 @@
-import express , {Request , Response} from 'express'
-import {db} from '../db'
+import  {Request , Response} from 'express'
+import {db} from '../db/index.ts'
 import {user }from '../db/schema/auth-schema.ts';
 
 const getUsers = async(req: Request , res: Response) =>{
