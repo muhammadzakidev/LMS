@@ -4,15 +4,20 @@ import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth/auth.ts";
 import userRouter  from './routes/userRoutes.ts'
+import instructorRoute from './routes/instructorRoutes.ts'
 const app = express();
 
-app.use(cors());
+app.use(cors({
+   origin: "http://localhost:5000",
+   credentials: true,
+}));
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
 app.use("/api/user", userRouter);
+app.use("/api/instructor", instructorRoute );
 
 const PORT = process.env.PORT || 5000;
 

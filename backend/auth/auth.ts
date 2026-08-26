@@ -7,7 +7,8 @@ import {
   account,
   verification,
 } from "../db/schema/auth-schema.ts";
-
+import {createAuthMiddleware, APIError} from "better-auth/api";
+import {signupSchema }from "../validation/authValidation.ts";
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -35,4 +36,19 @@ export const auth = betterAuth({
       },
     },
   },
+  hooks: {
+  before: createAuthMiddleware(async (ctx) => {
+    if (ctx.path === "/sign-up/email") {
+      const result = signupSchema.safeParse(ctx.body);
+
+      if (!result.success) {
+        throw new APIError("BAD_REQUEST", {
+          message:
+            result.error.issues[0]?.message ??
+            "Invalid signup data",
+        });
+      }
+    }
+  }),
+},
 });
