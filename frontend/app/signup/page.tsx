@@ -8,10 +8,10 @@ import {Label} from "@/components/ui/label";
 import {Card , CardContent , CardDescription  , CardHeader , CardTitle} from "@/components/ui/card";
 import {RadioGroup , RadioGroupItem} from "@/components/ui/radio-group";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 
 export default function SignupPage(){
-  const router = useRouter();
+ 
   const {register , handleSubmit , setValue , control , reset,formState: {errors, isSubmitting}} = useForm<SignupInput>({
    resolver: zodResolver(signupSchema),
    defaultValues:{
@@ -31,6 +31,7 @@ export default function SignupPage(){
         headers: {
           "content-type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify(data),
       });
       const result = await response.json();
@@ -41,7 +42,7 @@ export default function SignupPage(){
       return;
     }
       reset();
-      router.push("/login");
+    
     } catch (error) {
       console.log("Signup Error" , error);
     }
@@ -143,7 +144,7 @@ export default function SignupPage(){
               )
             }
           </div>
-          <Button className="w-full" type="submit" disabled={isSubmitting}>
+          <Button className="w-full" type="submit" disabled={isSubmitting} >
             {isSubmitting?"Creating Account...": "Create Account"}
           </Button>
           </form>

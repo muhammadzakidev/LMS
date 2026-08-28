@@ -7,7 +7,9 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Card , CardContent , CardDescription  , CardHeader , CardTitle} from "@/components/ui/card";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
 export default function LoginPage(){
+    const router = useRouter();
     const {register , handleSubmit , reset,formState: {errors, isSubmitting}} = useForm<loginInput>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -24,12 +26,31 @@ const onSubmit = async (data: loginInput) =>{
             headers: {
                 "content-type": "application/json" 
             },
+            credentials: "include",
             body: JSON.stringify(data),
         }
       );
 
       const result = await response.json();
       console.log("Login result" , result);
+    if (!response.ok)
+     {
+      console.log("Signup failed:", result);
+      return;
+    }
+    const role = result?.user?.role
+    if(role === 'Students')
+    {
+        router.push('/student/dashboard')
+    }
+    else if(role === 'Instructor')
+    {
+        router.push('/instructor/dashboard')
+    }
+    else 
+    {
+        console.log("Invalid role:" , role);
+    }
       reset();
     }
     catch(error)
@@ -57,7 +78,7 @@ return (
                     <Input id="email" type="email" placeholder="enter the email" {...register("email")}/>
                     {
                         errors.email && (
-                            <p className="text-sm text">
+                            <p className="text-sm text-red-600">
                                 {errors.email.message}
                             </p>
                         )

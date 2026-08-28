@@ -16,7 +16,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
-app.use("/api/user", userRouter);
+app.use("/api/student", userRouter);
 app.use("/api/instructor", instructorRoute );
 
 const PORT = process.env.PORT || 5000;

@@ -1,12 +1,12 @@
 import {Request , Response , NextFunction} from 'express'
 import {auth} from '../auth/auth.ts'
-
+import { fromNodeHeaders } from 'better-auth/node';
 
 
 export const getAuth = async(req: Request , res: Response , next: NextFunction) =>{
    try {
        const session = await auth.api.getSession({
-        headers: req.headers as Record<string , string>,
+        headers: fromNodeHeaders(req.headers) ,
        });
        if(!session)
        {
