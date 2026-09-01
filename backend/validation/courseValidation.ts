@@ -29,6 +29,12 @@ export const updateCourseSchema = z.object({
     status: z
     .enum(["draft" , "published"])
     
-})
+}).partial();
+
+export const updateCourseStatusSchema = z.object({
+    status: z
+    .enum(["draft" , "published"])
+});
 export type CreateCourseInput = z.infer<typeof createCourseSchema> 
 export type UpdateCourseInput = z.infer<typeof updateCourseSchema>
+export type UpdateCourseStatusInput = z.infer<typeof updateCourseStatusSchema>

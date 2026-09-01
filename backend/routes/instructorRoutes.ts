@@ -1,7 +1,14 @@
 import { Request, Response, Router } from "express";
 import { allowRole, instructorOnly } from "../middleware/roleMiddleware.ts";
 import { getAuth } from "../middleware/authMiddleware.ts";
-import { createCourse, getMyCourse } from "../controllers/courseController.ts";
+import {
+  createCourse,
+  getMyCourse,
+  getCourseById,
+  updateCourse,
+  deleteCourse,
+  updateCourseStatus,
+} from "../controllers/courseController.ts";
 
 const router = Router();
 
@@ -20,5 +27,13 @@ router.get(
 );
 router.post("/courses", getAuth, allowRole("Instructor"), createCourse);
 router.get("/courses", getAuth, allowRole("Instructor"), getMyCourse);
-
+router.get("/courses/:id", getAuth, allowRole("Instructor"), getCourseById);
+router.patch("/courses/:id", getAuth, allowRole("Instructor"), updateCourse);
+router.delete("/courses/:id", getAuth, allowRole("Instructor"), deleteCourse);
+router.patch(
+  "/courses/:id/status",
+  getAuth,
+  allowRole("Instructor"),
+  updateCourseStatus,
+);
 export default router;
