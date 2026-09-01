@@ -13,8 +13,7 @@ export default function ForbiddenPage(){
                 </h2>
                 <Button className="mt-6">
                     <Link href="/login" className="text-white">
-                        Go to Login First
-                    
+                        Login 
                     </Link>
 
                 </Button>

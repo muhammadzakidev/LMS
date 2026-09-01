@@ -1,7 +1,4 @@
 import  {Request , Response , NextFunction} from 'express'
-
-
-
 export const instructorOnly = (req: Request , res: Response , next: NextFunction) =>{
 
     const user = (req as any).user

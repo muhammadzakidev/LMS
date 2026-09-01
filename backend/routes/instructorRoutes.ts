@@ -1,17 +1,24 @@
-import {Request , Response, Router} from 'express'
-import {allowRole, instructorOnly} from '../middleware/roleMiddleware.ts'
-import {getAuth} from '../middleware/authMiddleware.ts'
-
+import { Request, Response, Router } from "express";
+import { allowRole, instructorOnly } from "../middleware/roleMiddleware.ts";
+import { getAuth } from "../middleware/authMiddleware.ts";
+import { createCourse, getMyCourse } from "../controllers/courseController.ts";
 
 const router = Router();
 
-router.get('/dashboard' , getAuth , allowRole("Instructor") ,instructorOnly, (req:Request &{user?: unknown} , res:Response)=>{
+router.get(
+  "/dashboard",
+  getAuth,
+  allowRole("Instructor"),
+  instructorOnly,
+  (req: Request & { user?: unknown }, res: Response) => {
     res.status(200).json({
-        success: true ,
-        message: 'Yes Instructor route is valid..',
-        user: req.user
-        
-    })
-} );
+      success: true,
+      message: "Yes Instructor route is valid..",
+      user: req.user,
+    });
+  },
+);
+router.post("/courses", getAuth, allowRole("Instructor"), createCourse);
+router.get("/courses", getAuth, allowRole("Instructor"), getMyCourse);
 
-export default router
+export default router;
