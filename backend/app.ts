@@ -6,7 +6,8 @@ import { auth } from "./auth/auth.ts";
 import userRouter  from './routes/userRoutes.ts'
 import instructorRoute from './routes/instructorRoutes.ts'
 import { createRouteHandler } from "uploadthing/express";
-import { uploadRouter } from './upload/uploadthing.ts';
+// cspell:disable-next-line
+import { uploadRouter } from "./upload/uploadthing.ts";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors({
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
+// cspell:disable-next-line
 app.use("/api/uploadthing", createRouteHandler({
   router: uploadRouter,
 }));

@@ -19,7 +19,7 @@ interface Course {
   title: string;
   slug: string;
   description: string;
-  coverImageUrl: string | null;
+  cover_image_url: string | null;
   status: "draft" | "published";
   createdAt: string;
   updatedAt: string;
@@ -49,9 +49,9 @@ async function getCourse(): Promise<Course[]> {
     }
 
     const data: CourseResponse = await response.json();
-   console.log("STATUS:", response.status);
+    console.log("STATUS:", response.status);
     console.log("COURSE API RESPONSE:", data);
-     return data.courses ?? [];
+    return data.courses ?? [];
   } catch (error) {
     console.log("Fetch courses error:", error);
     return [];
@@ -62,20 +62,20 @@ export default async function InstructorCoursePage() {
   const courses = await getCourse();
   return (
     <div className="space-y-6">
-     
       {courses.length === 0 && (
         <Card className="py-10">
           <CardContent className="flex flex-col items-center justify-center">
-           
             <h2 className="text-xl font-semibold">No courses yet</h2>
             <p className="mt-2 text-center text-sm text-muted-foreground">
               Create your First course to get started
             </p>
-            <Button  className="mt-5">
-              <Link href="/instructor/courses/create" className="flex flex-row gap-2">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Course
-              </Link>
+            <Button
+              className="mt-5"
+              nativeButton={false}
+              render={<Link href="/instructor/courses/create" />}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Course
             </Button>
           </CardContent>
         </Card>
@@ -85,12 +85,13 @@ export default async function InstructorCoursePage() {
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {courses.map((course) => (
             <Card key={course.id} className="flex flex-col overflow-hidden">
-              {course.coverImageUrl ? (
+              {course.cover_image_url ? (
                 <Image
-                  src={course.coverImageUrl}
+                  src={course.cover_image_url}
                   alt={course.title}
-                  width={400}
-                  height={192}
+                  width={200}
+                  height={50}
+                  loading="eager"
                   className="h-48 w-full object-cover"
                 />
               ) : (
@@ -119,16 +120,23 @@ export default async function InstructorCoursePage() {
                 </p>
               </CardContent>
               <CardFooter className="gap-2">
-                <Button variant="outline" className="flex-1" >
-                  <Link href={`/instructor/courses/${course.id}/edit`}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  nativeButton={false}
+                  render={
+                    <Link href={`/instructor/courses/${course.id}/edit`} />
+                  }
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
                 </Button>
-                <Button className="flex-1" >
-                  <Link href={`/instructor/courses/${course.id}`}>
-                    Manage
-                  </Link>
+                <Button
+                  className="flex-1"
+                  nativeButton={false}
+                  render={<Link href={`/instructor/courses/${course.id}`} />}
+                >
+                  Manage
                 </Button>
               </CardFooter>
             </Card>

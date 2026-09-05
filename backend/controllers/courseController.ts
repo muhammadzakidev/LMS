@@ -43,7 +43,7 @@ export const createCourse = async (req: Request, res: Response) => {
         description: validation.data.description,
         cover_image_url: validation.data.cover_image_url,
         slug: slug,
-        status: "draft",
+        status: "published",  // ✅ Changed to published
       })
       .returning();
 

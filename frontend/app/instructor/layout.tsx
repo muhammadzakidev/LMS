@@ -2,8 +2,8 @@ import {redirect} from 'next/navigation'
 import { getAuthSession } from '@/lib/auth'
 import { SidebarInset , SidebarProvider } from '@/components/ui/sidebar'
 
-import AppSidebar from "@/components/instructor/app-sidebar.tsx"
-import InstructorHeader from "@/components/instructor/instructor-header.tsx"
+import AppSidebar from "@/components/instructor/app-sidebar"
+import InstructorHeader from "@/components/instructor/instructor-header"
 
 export default async function InstructorLayout({
     children,
