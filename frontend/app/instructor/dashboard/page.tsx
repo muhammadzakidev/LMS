@@ -1,3 +1,4 @@
+
 import { redirect } from "next/navigation";
 import { getAuthSession } from "@/lib/auth";
 import Link from "next/link";
@@ -31,7 +32,7 @@ interface Course {
 interface CourseResponse {
   success: boolean;
   message: string;
-  course: Course[];  // ✅ Changed to "course" (singular, but array)
+  course: Course[]; 
 }
 
 // Get instructor courses
@@ -56,7 +57,7 @@ async function getCourses(): Promise<Course[]> {
 
     const data: CourseResponse = await response.json();
 
-    return data.course ?? [];  // ✅ Changed from data.courses
+    return data.course ?? [];  
   } catch (error) {
     console.log("Dashboard courses error:", error);
     return [];
@@ -64,7 +65,7 @@ async function getCourses(): Promise<Course[]> {
 }
 
 export default async function InstructorDashboard() {
-  // Auth check
+
   const session = await getAuthSession();
 
   if (!session?.user) {
@@ -81,7 +82,7 @@ export default async function InstructorDashboard() {
   return (
     <div className="space-y-6">
 
-      {/* Heading */}
+
       <div>
         <h1 className="text-3xl font-bold">
           Instructor Dashboard
@@ -92,7 +93,7 @@ export default async function InstructorDashboard() {
         </p>
       </div>
 
-      {/* Courses */}
+   
       {courses.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
@@ -112,7 +113,7 @@ export default async function InstructorDashboard() {
               className="overflow-hidden"
             >
 
-              {/* Cover Image */}
+             
               {course.cover_image_url ? (
                 <Image
                   src={course.cover_image_url}

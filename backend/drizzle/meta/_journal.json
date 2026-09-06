@@ -15,6 +15,13 @@
       "when": 1787935179380,
       "tag": "0001_fancy_mauler",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788732374433,
+      "tag": "0002_peaceful_marvel_apes",
+      "breakpoints": true
     }
   ]
 }

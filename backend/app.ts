@@ -8,6 +8,7 @@ import instructorRoute from './routes/instructorRoutes.ts'
 import { createRouteHandler } from "uploadthing/express";
 // cspell:disable-next-line
 import { uploadRouter } from "./upload/uploadthing.ts";
+import moduleRouter from "./routes/moduleRoutes.ts";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/uploadthing", createRouteHandler({
 }));
 app.use("/api/student", userRouter);
 app.use("/api/instructor", instructorRoute );
+app.use("/api/instructor", moduleRouter);
 
 const PORT = process.env.PORT || 5000;
 
