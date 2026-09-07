@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AddModuleDialog from "@/components/instructor/addModule"
+import { Card, CardContent, CardHeader,CardDescription ,CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
 
 interface Course {
   id: string;
@@ -25,7 +26,19 @@ interface CourseResponse {
   message: string;
   course: Course;
 }
-
+interface Module {
+  id: string ;
+  courseId: string ;
+  title: string ;
+  position: number ;
+  createdAt: string ;
+  updatedAt: string ;
+}
+interface ModuleResponse {
+  success: boolean;
+  message: string;
+  modules: Module[];
+}
 async function getCourse(id: string): Promise<Course | null> {
   const cookieStore = await cookies();
 
@@ -59,7 +72,35 @@ interface PageProps {
     id: string;
   }>;
 }
+async function getModules(
+  courseId: string
+): Promise<Module[]> {
+  const cookieStore = await cookies();
 
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/instructor/courses/${courseId}/modules`,
+      {
+        method: "GET",
+        headers: {
+          cookie: cookieStore.toString(),
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data: ModuleResponse = await response.json();
+
+    return data.modules ?? [];
+  } catch (error) {
+    console.log("Get modules error:", error);
+    return [];
+  }
+}
 export default async function ManageCoursePage({ params }: PageProps) {
   const { id } = await params;
 
@@ -68,7 +109,7 @@ export default async function ManageCoursePage({ params }: PageProps) {
   if (!course) {
     notFound();
   }
-
+const modules = await getModules(id);
   return (
     <div className="space-y-6">
       <Button
@@ -126,7 +167,7 @@ export default async function ManageCoursePage({ params }: PageProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Course Content</CardTitle>
         </CardHeader>
@@ -144,7 +185,60 @@ export default async function ManageCoursePage({ params }: PageProps) {
             <Button className="mt-4">Add Module</Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
+      <Card>
+  <CardHeader>
+    <div className="flex items-center justify-between">
+      <div>
+        <CardTitle>Course Content</CardTitle>
+        <CardDescription>
+          Organize your course into modules and lessons.
+        </CardDescription>
+      </div>
+
+      <AddModuleDialog courseId={course.id} />
+    </div>
+  </CardHeader>
+
+  <CardContent>
+    {modules.length === 0 ? (
+      <div className="flex flex-col items-center justify-center py-10">
+        <BookOpen className="mb-3 h-10 w-10 text-muted-foreground" />
+
+        <p className="font-medium">
+          No modules added yet
+        </p>
+
+        <p className="mt-1 text-sm text-muted-foreground">
+          Add your first module to start building the course.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-3">
+        {modules.map((module) => (
+          <div
+            key={module.id}
+            className="flex items-center gap-4 rounded-lg border p-4"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted font-semibold">
+              {module.position}
+            </div>
+
+            <div className="flex-1">
+              <p className="font-medium">
+                {module.title}
+              </p>
+
+              <p className="text-sm text-muted-foreground">
+                Module {module.position}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </CardContent>
+</Card>
     </div>
   );
 }
