@@ -9,7 +9,7 @@ import { createRouteHandler } from "uploadthing/express";
 // cspell:disable-next-line
 import { uploadRouter } from "./upload/uploadthing.ts";
 import moduleRouter from "./routes/moduleRoutes.ts";
-
+import lessonRouter from './routes/lessonRoutes.ts'
 const app = express();
 
 app.use(cors({
@@ -27,7 +27,7 @@ app.use("/api/uploadthing", createRouteHandler({
 app.use("/api/student", userRouter);
 app.use("/api/instructor", instructorRoute );
 app.use("/api/instructor", moduleRouter);
-
+app.use("/api/instructor", lessonRouter);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

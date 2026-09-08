@@ -3,11 +3,19 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
-import AddModuleDialog from "@/components/instructor/addModule"
-import { Card, CardContent, CardHeader,CardDescription ,CardTitle } from "@/components/ui/card";
+
+import AddModuleDialog from "@/components/instructor/addModule";
+import AddLessonFeature from "@/components/instructor/addLesson";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
 
 interface Course {
   id: string;
@@ -26,19 +34,45 @@ interface CourseResponse {
   message: string;
   course: Course;
 }
+
 interface Module {
-  id: string ;
-  courseId: string ;
-  title: string ;
-  position: number ;
-  createdAt: string ;
-  updatedAt: string ;
+  id: string;
+  courseId: string;
+  title: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
 }
+
 interface ModuleResponse {
   success: boolean;
   message: string;
   modules: Module[];
 }
+
+interface Lesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  description: string | null;
+  videoUrl: string | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface LessonResponse {
+  success: boolean;
+  message: string;
+  lessons: Lesson[];
+}
+
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
 async function getCourse(id: string): Promise<Course | null> {
   const cookieStore = await cookies();
 
@@ -67,14 +101,7 @@ async function getCourse(id: string): Promise<Course | null> {
   }
 }
 
-interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
-async function getModules(
-  courseId: string
-): Promise<Module[]> {
+async function getModules(courseId: string): Promise<Module[]> {
   const cookieStore = await cookies();
 
   try {
@@ -86,7 +113,7 @@ async function getModules(
           cookie: cookieStore.toString(),
         },
         cache: "no-store",
-      }
+      },
     );
 
     if (!response.ok) {
@@ -101,6 +128,38 @@ async function getModules(
     return [];
   }
 }
+
+async function getLessons(
+  courseId: string,
+  moduleId: string,
+): Promise<Lesson[]> {
+  const cookieStore = await cookies();
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/instructor/courses/${courseId}/modules/${moduleId}/lessons`,
+      {
+        method: "GET",
+        headers: {
+          cookie: cookieStore.toString(),
+        },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data: LessonResponse = await response.json();
+
+    return data.lessons ?? [];
+  } catch (error) {
+    console.log("Get lessons error:", error);
+    return [];
+  }
+}
+
 export default async function ManageCoursePage({ params }: PageProps) {
   const { id } = await params;
 
@@ -109,9 +168,23 @@ export default async function ManageCoursePage({ params }: PageProps) {
   if (!course) {
     notFound();
   }
-const modules = await getModules(id);
+
+  const modules = await getModules(id);
+
+  const moduleWithLessons = await Promise.all(
+    modules.map(async (module) => {
+      const lessons = await getLessons(id, module.id);
+
+      return {
+        ...module,
+        lessons,
+      };
+    }),
+  );
+
   return (
     <div className="space-y-6">
+      {/* Back Button */}
       <Button
         variant="ghost"
         className="pl-0"
@@ -122,6 +195,7 @@ const modules = await getModules(id);
         Back to Dashboard
       </Button>
 
+      {/* Course Details */}
       <Card className="overflow-hidden">
         {course.cover_image_url ? (
           <Image
@@ -167,78 +241,89 @@ const modules = await getModules(id);
         </CardContent>
       </Card>
 
-      {/* <Card>
+      {/* Course Content */}
+      <Card>
         <CardHeader>
-          <CardTitle>Course Content</CardTitle>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Course Content</CardTitle>
+
+              <CardDescription>
+                Organize your course into modules and lessons.
+              </CardDescription>
+            </div>
+
+            <AddModuleDialog courseId={course.id} />
+          </div>
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-10">
-            <BookOpen className="mb-3 h-10 w-10 text-muted-foreground" />
+          {modules.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <BookOpen className="mb-3 h-10 w-10 text-muted-foreground" />
 
-            <p className="font-medium">No modules added yet</p>
+              <p className="font-medium">No modules added yet</p>
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add modules and lessons to build your course.
-            </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add your first module to start building the course.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {moduleWithLessons.map((module) => (
+                <div key={module.id} className="rounded-lg border">
+              
+                  <div className="flex items-center gap-4 p-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted font-semibold">
+                      {module.position}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">{module.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Module {module.position}
+                      </p>
+                    </div>
 
-            <Button className="mt-4">Add Module</Button>
-          </div>
+                    <AddLessonFeature
+                      courseId={course.id}
+                      moduleId={module.id}
+                    />
+                  </div>
+
+                  {module.lessons.length > 0 && (
+                    <div className="border-t px-4 py-3">
+                      <div className="space-y-2">
+                        {module.lessons.map((lesson) => (
+                          <div
+                            key={lesson.id}
+                            className="flex items-center gap-3 rounded-md bg-muted/50 p-3"
+                          >
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-background text-sm font-medium">
+                              {lesson.position}
+                            </div>
+
+                            <div className="flex-1">
+                              <p className="text-sm font-medium">
+                                {lesson.title}
+                              </p>
+
+                              {lesson.description && (
+                                <p className="line-clamp-1 text-xs text-muted-foreground">
+                                  {lesson.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
-      </Card> */}
-      <Card>
-  <CardHeader>
-    <div className="flex items-center justify-between">
-      <div>
-        <CardTitle>Course Content</CardTitle>
-        <CardDescription>
-          Organize your course into modules and lessons.
-        </CardDescription>
-      </div>
-
-      <AddModuleDialog courseId={course.id} />
-    </div>
-  </CardHeader>
-
-  <CardContent>
-    {modules.length === 0 ? (
-      <div className="flex flex-col items-center justify-center py-10">
-        <BookOpen className="mb-3 h-10 w-10 text-muted-foreground" />
-
-        <p className="font-medium">
-          No modules added yet
-        </p>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Add your first module to start building the course.
-        </p>
-      </div>
-    ) : (
-      <div className="space-y-3">
-        {modules.map((module) => (
-          <div
-            key={module.id}
-            className="flex items-center gap-4 rounded-lg border p-4"
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted font-semibold">
-              {module.position}
-            </div>
-
-            <div className="flex-1">
-              <p className="font-medium">
-                {module.title}
-              </p>
-
-              <p className="text-sm text-muted-foreground">
-                Module {module.position}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-  </CardContent>
-</Card>
+      </Card>
     </div>
   );
 }
