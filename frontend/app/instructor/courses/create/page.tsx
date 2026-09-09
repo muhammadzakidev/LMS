@@ -62,7 +62,7 @@ export default function CreateCoursePage() {
 
       const result = await response.json();
       if (!response.ok) {
-        console.log("Create course failed :", result);
+        alert(`Failed to create course: ${result.message || 'Unknown error'}`);  // ✅ Show error to user
         return;
       }
       router.push("/instructor/dashboard");

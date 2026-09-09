@@ -43,7 +43,7 @@ export const createCourse = async (req: Request, res: Response) => {
         description: validation.data.description,
         cover_image_url: validation.data.cover_image_url,
         slug: slug,
-        status: "published",  // ✅ Changed to published
+        status: "published",  
       })
       .returning();
 
@@ -105,10 +105,16 @@ export const getCourseById = async (req: Request, res: Response) => {
       });
     }
     const courseId = req.params.id as string;
-    const result = await db
+    const [result] = await db
       .select()
       .from(course)
       .where(and(eq(course.id, courseId), eq(course.instructorId, user.id)));
+       if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
     return res.status(201).json({
       success: true,
       message: "Get course by id successfully",

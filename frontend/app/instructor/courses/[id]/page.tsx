@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
-
 import AddModuleDialog from "@/components/instructor/addModule";
 import AddLessonFeature from "@/components/instructor/addLesson";
-
+import DeleteDialog from "@/components/instructor/deleteModule";
+import EditModule from "@/components/instructor/editModule";
 import {
   Card,
   CardContent,
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import EditLesson from "@/components/instructor/editLesson";
+import DeleteLesson from "@/components/instructor/deleteLesson";
 
 interface Course {
   id: string;
@@ -184,7 +186,6 @@ export default async function ManageCoursePage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      {/* Back Button */}
       <Button
         variant="ghost"
         className="pl-0"
@@ -195,7 +196,6 @@ export default async function ManageCoursePage({ params }: PageProps) {
         Back to Dashboard
       </Button>
 
-      {/* Course Details */}
       <Card className="overflow-hidden">
         {course.cover_image_url ? (
           <Image
@@ -241,7 +241,6 @@ export default async function ManageCoursePage({ params }: PageProps) {
         </CardContent>
       </Card>
 
-      {/* Course Content */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -272,7 +271,6 @@ export default async function ManageCoursePage({ params }: PageProps) {
             <div className="space-y-4">
               {moduleWithLessons.map((module) => (
                 <div key={module.id} className="rounded-lg border">
-              
                   <div className="flex items-center gap-4 p-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted font-semibold">
                       {module.position}
@@ -284,10 +282,23 @@ export default async function ManageCoursePage({ params }: PageProps) {
                       </p>
                     </div>
 
-                    <AddLessonFeature
-                      courseId={course.id}
-                      moduleId={module.id}
-                    />
+                    <div className="flex items-center gap-2">
+                      <AddLessonFeature
+                        courseId={course.id}
+                        moduleId={module.id}
+                      />
+                      <EditModule
+                        courseId={course.id}
+                        moduleId={module.id}
+                        currentTitle={module.title}
+                      />
+
+                      <DeleteDialog
+                        courseId={course.id}
+                        moduleId={module.id}
+                        moduleTitle={module.title}
+                      />
+                    </div>
                   </div>
 
                   {module.lessons.length > 0 && (
@@ -312,6 +323,33 @@ export default async function ManageCoursePage({ params }: PageProps) {
                                   {lesson.description}
                                 </p>
                               )}
+                              {lesson.videoUrl && (
+                                <a
+                                  href={lesson.videoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="mt-1 inline-block text-xs text-primary hover:underline"
+                                >
+                                  Open Video
+                                </a>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <EditLesson
+                                courseId={course.id}
+                                moduleId={module.id}
+                                lessonId={lesson.id}
+                                currentTitle={lesson.title}
+                                currentDescription={lesson.description}
+                                currentVideoUrl={lesson.videoUrl}
+                              />
+
+                              <DeleteLesson
+                                courseId={course.id}
+                                moduleId={module.id}
+                                lessonId={lesson.id}
+                                lessonTitle={lesson.title}
+                              />
                             </div>
                           </div>
                         ))}

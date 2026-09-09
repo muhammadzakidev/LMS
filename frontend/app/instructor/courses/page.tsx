@@ -28,7 +28,7 @@ interface Course {
 interface CourseResponse {
   success: boolean;
   message: string;
-  courses: Course[];
+  course: Course[];  // ✅ Changed from "courses" to "course"
 }
 
 async function getCourse(): Promise<Course[]> {
@@ -51,7 +51,7 @@ async function getCourse(): Promise<Course[]> {
     const data: CourseResponse = await response.json();
     console.log("STATUS:", response.status);
     console.log("COURSE API RESPONSE:", data);
-    return data.courses ?? [];
+    return data.course ?? [];  // ✅ Changed from data.courses to data.course
   } catch (error) {
     console.log("Fetch courses error:", error);
     return [];
@@ -60,38 +60,61 @@ async function getCourse(): Promise<Course[]> {
 
 export default async function InstructorCoursePage() {
   const courses = await getCourse();
+
   return (
     <div className="space-y-6">
-      {courses.length === 0 && (
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Courses
+          </h1>
+
+          <p className="text-muted-foreground">
+            Create and manage your courses.
+          </p>
+        </div>
+
+        <Button
+          nativeButton={false}
+          render={<Link href="/instructor/courses/create" />}
+        >
+          <Plus className="h-4 w-4" />
+          Create Course
+        </Button>
+      </div>
+
+      {/* Empty State */}
+      {courses.length === 0 ? (
         <Card className="py-10">
           <CardContent className="flex flex-col items-center justify-center">
-            <h2 className="text-xl font-semibold">No courses yet</h2>
+            <BookOpen className="mb-3 h-12 w-12 text-muted-foreground" />
+
+            <h2 className="text-xl font-semibold">
+              No courses yet
+            </h2>
+
             <p className="mt-2 text-center text-sm text-muted-foreground">
-              Create your First course to get started
+              Create your first course to get started.
             </p>
-            <Button
-              className="mt-5"
-              nativeButton={false}
-              render={<Link href="/instructor/courses/create" />}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Course
-            </Button>
           </CardContent>
         </Card>
-      )}
+      ) : (
 
-      {courses.length > 0 && (
+        /* Course Cards */
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {courses.map((course) => (
-            <Card key={course.id} className="flex flex-col overflow-hidden">
+            <Card
+              key={course.id}
+              className="flex flex-col overflow-hidden"
+            >
               {course.cover_image_url ? (
                 <Image
                   src={course.cover_image_url}
                   alt={course.title}
-                  width={200}
-                  height={50}
-                  loading="eager"
+                  width={600}
+                  height={300}
                   className="h-48 w-full object-cover"
                 />
               ) : (
@@ -99,45 +122,56 @@ export default async function InstructorCoursePage() {
                   <BookOpen className="h-12 w-12 text-muted-foreground" />
                 </div>
               )}
+
               <CardHeader>
                 <div className="flex items-start justify-between gap-3">
-                  <CardTitle className="line-clamp-1">{course.title}</CardTitle>
+
+                  <CardTitle className="line-clamp-1">
+                    {course.title}
+                  </CardTitle>
+
                   <Badge
                     variant={
-                      course.status === "published" ? "default" : "secondary"
+                      course.status === "published"
+                        ? "default"
+                        : "secondary"
                     }
                   >
                     {course.status}
                   </Badge>
+
                 </div>
-                <CardDescription className="line-clamp-1">
+
+                <CardDescription className="line-clamp-2">
                   {course.description}
                 </CardDescription>
               </CardHeader>
+
               <CardContent className="flex-1">
                 <p className="text-xs text-muted-foreground">
-                  Created {new Date(course.createdAt).toLocaleDateString()}
+                  Created{" "}
+                  {new Date(
+                    course.createdAt
+                  ).toLocaleDateString()}
                 </p>
               </CardContent>
+
               <CardFooter className="gap-2">
+
+               
+
                 <Button
-                  variant="outline"
                   className="flex-1"
                   nativeButton={false}
                   render={
-                    <Link href={`/instructor/courses/${course.id}/edit`} />
+                    <Link
+                      href={`/instructor/courses/${course.id}`}
+                    />
                   }
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit
-                </Button>
-                <Button
-                  className="flex-1"
-                  nativeButton={false}
-                  render={<Link href={`/instructor/courses/${course.id}`} />}
                 >
                   Manage
                 </Button>
+
               </CardFooter>
             </Card>
           ))}
@@ -146,3 +180,4 @@ export default async function InstructorCoursePage() {
     </div>
   );
 }
+

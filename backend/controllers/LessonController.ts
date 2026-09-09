@@ -123,18 +123,16 @@ export const getLesson = async (req: Request, res: Response) => {
       .select()
       .from(modules)
       .where(
-        and(
-          eq(modules.id, normalizedModuleId),
-          eq(modules.courseId, courseId),
-        ),
-      ).limit(1);
-       if (!module.length) {
+        and(eq(modules.id, normalizedModuleId), eq(modules.courseId, courseId)),
+      )
+      .limit(1);
+    if (!module.length) {
       return res.status(404).json({
         success: false,
         message: "Module not found",
       });
     }
-      const moduleLessons = await db
+    const moduleLessons = await db
       .select()
       .from(lessons)
       .where(eq(lessons.moduleId, normalizedModuleId))
@@ -146,7 +144,182 @@ export const getLesson = async (req: Request, res: Response) => {
       lessons: moduleLessons,
     });
   } catch (error) {
-      console.log("Get lessons error:", error);
+    console.log("Get lessons error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateLesson = async (req: Request, res: Response) => {
+  try {
+    const courseId = String(req.params.courseId);
+    const moduleId = String(req.params.moduleId);
+    const lessonId = String(req.params.lessonId);
+    const user = (
+      req as Request & {
+        user?: {
+          id: string;
+        };
+      }
+    ).user;
+    if (!user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+    const courses = await db
+      .select()
+      .from(course)
+      .where(and(eq(course.id, courseId), eq(course.instructorId, user.id)))
+      .limit(1);
+    if (!courses.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+    const module = await db
+      .select()
+      .from(modules)
+      .where(and(eq(modules.id, moduleId), eq(modules.courseId, courseId)))
+      .limit(1);
+    if (!module.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Module not found",
+      });
+    }
+    const lesson = await db
+      .select()
+      .from(lessons)
+      .where(and(eq(lessons.id, lessonId), eq(lessons.moduleId, moduleId)))
+      .limit(1);
+    if (!lesson.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Lesson not found",
+      });
+    }
+
+    const result = createLessonSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues[0]?.message ?? "Invalid lesson data",
+      });
+    }
+    const { title, description, videoUrl } = result.data;
+    const updatedLesson = await db
+      .update(lessons)
+      .set({
+        title,
+        description: description || null,
+        videoUrl: videoUrl || null,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(lessons.id, lessonId), eq(lessons.moduleId, moduleId)))
+      .returning();
+    return res.status(200).json({
+      success: true,
+      message: "Lesson updated successfully",
+      lesson: updatedLesson[0],
+    });
+  } catch (error) {
+    console.log("Update lesson error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const deleteLesson = async (req: Request, res: Response) => {
+  try {
+    const courseId = String(req.params.courseId);
+    const moduleId = String(req.params.moduleId);
+    const lessonId = String(req.params.lessonId);
+    const user = (
+      req as Request & {
+        user?: {
+          id: string;
+        };
+      }
+    ).user;
+    if (!user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const courses = await db
+      .select()
+      .from(course)
+      .where(and(eq(course.id, courseId), eq(course.instructorId, user.id)))
+      .limit(1);
+
+    if (!courses.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    const module = await db
+      .select()
+      .from(modules)
+      .where(and(eq(modules.id, moduleId), eq(modules.courseId, courseId)))
+      .limit(1);
+
+    if (!module.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Module not found",
+      });
+    }
+
+    const lesson = await db
+      .select()
+      .from(lessons)
+      .where(and(eq(lessons.id, lessonId), eq(lessons.moduleId, moduleId)))
+      .limit(1);
+
+    if (!lesson.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Lesson not found",
+      });
+    }
+
+    const deleteLes = await db
+      .delete(lessons)
+      .where(and(eq(lessons.id, lessonId), eq(lessons.moduleId, moduleId)));
+    const remainingLessons = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.moduleId, moduleId))
+      .orderBy(asc(lessons.position));
+
+    for (let i = 0; i < remainingLessons.length; i++) {
+      await db
+        .update(lessons)
+        .set({
+          position: i + 1,
+        })
+        .where(eq(lessons.id, remainingLessons[i].id));
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Lesson deleted successfully",
+      module: deleteLes,
+    });
+  } catch (error) {
+    console.log("Delete lesson error:", error);
 
     return res.status(500).json({
       success: false,

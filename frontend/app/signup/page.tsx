@@ -38,7 +38,7 @@ export default function SignupPage(){
       console.log("Signup Result" , result);
       if (!response.ok)
      {
-      console.log("Signup failed:", result);
+      alert(`Signup failed: ${result.message || 'Unknown error'}`);  // ✅ Show error to user
       return;
     }
       reset();

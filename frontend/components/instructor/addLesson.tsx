@@ -74,6 +74,8 @@ export default function AddLessonFeature({
     } catch (error) {
       console.log("Create lesson error:", error);
       setError("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 

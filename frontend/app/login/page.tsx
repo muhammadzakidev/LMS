@@ -35,7 +35,7 @@ const onSubmit = async (data: loginInput) =>{
       console.log("Login result" , result);
     if (!response.ok)
      {
-      console.log("Signup failed:", result);
+      alert(`Login failed: ${result.message || 'Unknown error'}`);  
       return;
     }
     const role = result?.user?.role

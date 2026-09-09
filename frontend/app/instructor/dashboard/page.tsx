@@ -76,13 +76,11 @@ export default async function InstructorDashboard() {
     redirect("/403");
   }
 
-  // Get courses
+  
   const courses = await getCourses();
 
   return (
     <div className="space-y-6">
-
-
       <div>
         <h1 className="text-3xl font-bold">
           Instructor Dashboard

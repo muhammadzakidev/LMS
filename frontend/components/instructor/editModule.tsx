@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
-
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import {
   Dialog,
@@ -16,35 +15,36 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-
-interface AddModuleProps {
+} from "@/components/ui/dialog";
+interface EditModuleDialogProps {
   courseId: string;
+  moduleId: string;
+  currentTitle: string;
 }
 
-export default function AddModuleDialog({ courseId }: AddModuleProps) {
+export default function EditModule({
+  courseId,
+  moduleId,
+  currentTitle,
+}: EditModuleDialogProps) {
   const router = useRouter();
-
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(currentTitle);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const createModule = async () => {
+  const updateModule = async () => {
     setError("");
-
     if (title.trim().length < 3) {
-      setError("Module title must have at least 3 characters");
+      setError("Module title must be at least 3 characters");
       return;
     }
-
     try {
       setIsLoading(true);
-
       const response = await fetch(
-        `http://localhost:5000/api/instructor/courses/${courseId}/modules`,
+        `http://localhost:5000/api/instructor/courses/${courseId}/modules/${moduleId}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
@@ -54,72 +54,61 @@ export default function AddModuleDialog({ courseId }: AddModuleProps) {
           }),
         },
       );
-
       const data = await response.json();
 
-      console.log("Create module response:", data);
-
       if (!response.ok) {
-        setError(data.message || "Failed to create module");
+        setError(data.message || "Failed to update module");
         return;
       }
 
-      setTitle("");
-      setError("");
       setOpen(false);
-
       router.refresh();
     } catch (error) {
-      console.log("Create module error:", error);
+      console.log("Update module error:", error);
       setError("Something went wrong");
-    } finally {
+    }finally {
       setIsLoading(false);
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button>
-            <Plus className="h-4 w-4" />
-            Add Module
+          <Button variant="outline" size="sm">
+            <Pencil className="h-4 w-4" />
+            Edit
           </Button>
         }
       />
-
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Module</DialogTitle>
-
-          <DialogDescription>Add a new module to this course</DialogDescription>
+          <DialogTitle>Edit Module</DialogTitle>
+          <DialogDescription>Update the module title.</DialogDescription>
         </DialogHeader>
-
         <div className="space-y-2">
-          <Label htmlFor="module-title">Module title</Label>
-
+          <Label htmlFor={`edit-module-${moduleId}`}>Module Title</Label>
           <Input
-            id="module-title"
-            placeholder="Write title"
+            id={`edit-module-${moduleId}`}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
-
         <DialogFooter>
           <Button
             variant="outline"
             type="button"
-            onClick={() => setOpen(false)}
             disabled={isLoading}
+            onClick={() => setOpen(false)}
           >
             Cancel
           </Button>
-
-          <Button type="button" onClick={createModule} disabled={isLoading}>
-            {isLoading ? "Creating..." : "Create Module"}
+           <Button
+            type="button"
+            disabled={isLoading}
+            onClick={updateModule}
+          >
+            {isLoading ? "Updating..." : "Update Module"}
           </Button>
         </DialogFooter>
       </DialogContent>
