@@ -7,5 +7,5 @@ const router = Router();
 router.post("/courses/:courseId/enroll", getAuth,allowRole("Students"),enrollCourse);
 router.get("/courses", getAuth, allowRole("Students"),getUploadedCourse);
 router.get("/myCourse", getAuth, allowRole("Students"), getMyCourse);
-router.post("/courses/:courseId", getAuth, allowRole("Students"), getCourseById);
+router.get("/courses/:courseId", getAuth, allowRole("Students"), getCourseById);
 export default router ;

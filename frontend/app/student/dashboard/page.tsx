@@ -25,7 +25,7 @@ export default async function StudentDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
+   
       <div>
         <h1 className="text-3xl font-bold">
           Welcome, {session.user.name}
@@ -36,9 +36,8 @@ export default async function StudentDashboardPage() {
         </p>
       </div>
 
-      {/* Actions */}
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Explore Courses */}
+
         <Card>
           <CardHeader>
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -84,7 +83,7 @@ export default async function StudentDashboardPage() {
               variant="outline"
               className="w-full"
               nativeButton={false}
-              render={<Link href="/student/my-courses" />}
+              render={<Link href="/student/myCourse" />}
             >
               View My Courses
             </Button>

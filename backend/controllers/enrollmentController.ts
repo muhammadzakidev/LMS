@@ -6,7 +6,8 @@ import { course } from "../db/schema/course-schema.ts";
 import { enrollments } from "../db/schema/enrollment-schema.ts";
 import { modules } from "../db/schema/module-schema.ts";
 import { lessons } from "../db/schema/lesson-schema.ts";
-import { success } from "zod";
+
+
 
 export const enrollCourse = async (req: Request, res: Response) => {
   try {
@@ -129,7 +130,7 @@ export const getMyCourse = async(
     })
     .from(enrollments)
     .innerJoin(course, eq(enrollments.courseId, course.id))
-    .where(eq(enrollments.courseId, user.id))
+    .where(eq(enrollments.studentId, user.id))
     .orderBy(desc(enrollments.enrollAt));
 
     return res.status(200).json({
@@ -210,7 +211,7 @@ export const getCourseById = async (req: Request, res: Response) => {
       const moduleLessons = await db.select().from(lessons).where(eq(lessons.moduleId, module.id)).orderBy(asc(lessons.position));
       return {
         ...module ,
-        lesson: moduleLessons
+        lessons: moduleLessons
       }
     })
    )
@@ -218,7 +219,7 @@ export const getCourseById = async (req: Request, res: Response) => {
     success: false ,
     message: "Lessons in Module fetch successfully",
     course: courseData,
-    module: getLessonForEveryModule
+    modules: getLessonForEveryModule
    })
   } catch (error) {
     console.log("Get course by id error:", error);
