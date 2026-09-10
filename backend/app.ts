@@ -3,13 +3,13 @@ import express from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth/auth.ts";
-import userRouter  from './routes/userRoutes.ts'
 import instructorRoute from './routes/instructorRoutes.ts'
 import { createRouteHandler } from "uploadthing/express";
 // cspell:disable-next-line
 import { uploadRouter } from "./upload/uploadthing.ts";
 import moduleRouter from "./routes/moduleRoutes.ts";
 import lessonRouter from './routes/lessonRoutes.ts'
+import studentRouter from './routes/studentRoutes.ts';
 const app = express();
 
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use("/api/uploadthing", createRouteHandler({
   router: uploadRouter,
 }));
-app.use("/api/student", userRouter);
+app.use("/api/student", studentRouter);
 app.use("/api/instructor", instructorRoute );
 app.use("/api/instructor", moduleRouter);
 app.use("/api/instructor", lessonRouter);

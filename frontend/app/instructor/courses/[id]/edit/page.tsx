@@ -61,10 +61,7 @@ export default function EditCoursePage() {
     reset,
     setValue,
     watch,
-    formState: {
-      errors,
-      isSubmitting,
-    },
+    formState: { errors, isSubmitting },
   } = useForm<CreateCourseInput>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: {
@@ -94,17 +91,14 @@ export default function EditCoursePage() {
         const data: CourseResponse = await response.json();
 
         if (!response.ok) {
-          setPageError(
-            data.message || "Failed to fetch course",
-          );
+          setPageError(data.message || "Failed to fetch course");
           return;
         }
 
         reset({
           title: data.course.title,
           description: data.course.description,
-          cover_image_url:
-            data.course.cover_image_url ?? "",
+          cover_image_url: data.course.cover_image_url ?? "",
         });
       } catch (error) {
         console.log("Fetch course error:", error);
@@ -119,9 +113,7 @@ export default function EditCoursePage() {
     }
   }, [courseId, reset]);
 
-  const onSubmit = async (
-    data: CreateCourseInput,
-  ) => {
+  const onSubmit = async (data: CreateCourseInput) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/instructor/courses/${courseId}`,
@@ -138,16 +130,11 @@ export default function EditCoursePage() {
       const result = await response.json();
 
       if (!response.ok) {
-        alert(
-          result.message ||
-            "Failed to update course",
-        );
+        alert(result.message || "Failed to update course");
         return;
       }
 
-      router.push(
-        `/instructor/courses/${courseId}`,
-      );
+      router.push(`/instructor/courses/${courseId}`);
 
       router.refresh();
     } catch (error) {
@@ -157,25 +144,17 @@ export default function EditCoursePage() {
   };
 
   if (isLoadingCourse) {
-    return (
-      <div className="py-10">
-        Loading course...
-      </div>
-    );
+    return <div className="py-10">Loading course...</div>;
   }
 
   if (pageError) {
     return (
       <div className="space-y-4">
-        <p className="text-destructive">
-          {pageError}
-        </p>
+        <p className="text-destructive">{pageError}</p>
 
         <Button
           nativeButton={false}
-          render={
-            <Link href="/instructor/courses" />
-          }
+          render={<Link href="/instructor/courses" />}
         >
           Back to Courses
         </Button>
@@ -189,20 +168,14 @@ export default function EditCoursePage() {
         variant="ghost"
         className="pl-0"
         nativeButton={false}
-        render={
-          <Link
-            href={`/instructor/courses/${courseId}`}
-          />
-        }
+        render={<Link href={`/instructor/courses/${courseId}`} />}
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Course
       </Button>
 
       <div>
-        <h1 className="text-3xl font-bold">
-          Edit Course
-        </h1>
+        <h1 className="text-3xl font-bold">Edit Course</h1>
 
         <p className="mt-1 text-muted-foreground">
           Update your course information.
@@ -211,25 +184,17 @@ export default function EditCoursePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>
-            Course Information
-          </CardTitle>
+          <CardTitle>Course Information</CardTitle>
 
           <CardDescription>
-            Update the title, description and
-            cover image.
+            Update the title, description and cover image.
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">
-                Course Title
-              </Label>
+              <Label htmlFor="title">Course Title</Label>
 
               <Input
                 id="title"
@@ -245,9 +210,7 @@ export default function EditCoursePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">
-                Description
-              </Label>
+              <Label htmlFor="description">Description</Label>
 
               <Textarea
                 id="description"
@@ -271,9 +234,7 @@ export default function EditCoursePage() {
                   <ImageIcon className="h-10 w-10 text-muted-foreground" />
 
                   <div className="text-center">
-                    <p className="text-sm font-semibold">
-                      Upload Course Cover
-                    </p>
+                    <p className="text-sm font-semibold">Upload Course Cover</p>
 
                     <p className="text-xs text-muted-foreground">
                       Maximum file size 4MB
@@ -282,32 +243,20 @@ export default function EditCoursePage() {
 
                   <UploadButton
                     endpoint="courseCoverImage"
-                    onClientUploadComplete={(
-                      files,
-                    ) => {
+                    onClientUploadComplete={(files) => {
                       const file = files?.[0];
 
                       if (!file) return;
 
-                      setValue(
-                        "cover_image_url",
-                        file.ufsUrl,
-                        {
-                          shouldDirty: true,
-                          shouldValidate: true,
-                        },
-                      );
+                      setValue("cover_image_url", file.ufsUrl, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
                     }}
                     onUploadError={(error) => {
-                      console.log(
-                        "Upload error:",
-                        error,
-                      );
+                      console.log("Upload error:", error);
 
-                      alert(
-                        error.message ||
-                          "Upload failed",
-                      );
+                      alert(error.message || "Upload failed");
                     }}
                   />
                 </div>
@@ -328,14 +277,10 @@ export default function EditCoursePage() {
                       type="button"
                       variant="outline"
                       onClick={() =>
-                        setValue(
-                          "cover_image_url",
-                          "",
-                          {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          },
-                        )
+                        setValue("cover_image_url", "", {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        })
                       }
                     >
                       Remove Image
@@ -346,10 +291,7 @@ export default function EditCoursePage() {
 
               {errors.cover_image_url && (
                 <p className="text-sm text-destructive">
-                  {
-                    errors.cover_image_url
-                      .message
-                  }
+                  {errors.cover_image_url.message}
                 </p>
               )}
             </div>
@@ -358,22 +300,13 @@ export default function EditCoursePage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() =>
-                  router.push(
-                    `/instructor/courses/${courseId}`,
-                  )
-                }
+                onClick={() => router.push(`/instructor/courses/${courseId}`)}
               >
                 Cancel
               </Button>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? "Updating..."
-                  : "Update Course"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Course"}
               </Button>
             </div>
           </form>

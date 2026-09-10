@@ -201,8 +201,8 @@ export default async function ManageCoursePage({ params }: PageProps) {
           <Image
             src={course.cover_image_url}
             alt={course.title}
-            width={1200}
-            height={500}
+            width={1100}
+            height={700}
             className="h-64 w-full object-cover"
           />
         ) : (
