@@ -1,24 +1,96 @@
-import {redirect} from "next/navigation"
-import { getAuthSession } from "@/lib/auth";
-export default async function StudentDashboard(){
-      const session = await getAuthSession();
-      if(!session?.user)
-      {
-        redirect('/login');
-      }
-      if(session.user.role !== 'Students')
-      {
-        redirect('/403');
-      }
-    return(
-        <>
-        <main className="p-4">
-            <h1 className="text-6xl font-bold text-center">Welcome to Student Dashboard</h1>
-            <h3 className="mt-6 text-3xl text-center">
-                Welcome, {session.user.name}! You are logged in as a {session.user.role}.
-            </h3>
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { BookOpen, GraduationCap } from "lucide-react";
 
-        </main>
-        </>
-    )
+import { getAuthSession } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+export default async function StudentDashboardPage() {
+  const session = await getAuthSession();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  if (session.user.role !== "Students") {
+    redirect("/403");
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Welcome */}
+      <div>
+        <h1 className="text-3xl font-bold">
+          Welcome, {session.user.name}
+        </h1>
+
+        <p className="mt-1 text-muted-foreground">
+          Continue learning or explore new courses.
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Explore Courses */}
+        <Card>
+          <CardHeader>
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <BookOpen className="h-6 w-6 text-primary" />
+            </div>
+
+            <CardTitle>Explore Courses</CardTitle>
+
+            <CardDescription>
+              Browse available courses and enroll in
+              something new.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Button
+              className="w-full"
+              nativeButton={false}
+              render={<Link href="/student/courses" />}
+            >
+              Explore Courses
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* My Courses */}
+        <Card>
+          <CardHeader>
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <GraduationCap className="h-6 w-6 text-primary" />
+            </div>
+
+            <CardTitle>My Courses</CardTitle>
+
+            <CardDescription>
+              Access the courses you have already enrolled
+              in.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full"
+              nativeButton={false}
+              render={<Link href="/student/my-courses" />}
+            >
+              View My Courses
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 }

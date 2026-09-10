@@ -29,7 +29,7 @@ interface Course {
 interface CourseResponse {
   success: boolean;
   message: string;
-  courses: Course[];
+  course: Course[];
 }
 
 async function getPubCourse(): Promise<Course[]> {
@@ -58,7 +58,7 @@ async function getPubCourse(): Promise<Course[]> {
 
     const data: CourseResponse = await response.json();
 
-    return data.courses ?? [];
+    return data.course ?? [];
   } catch (error) {
     console.log("Student courses fetch error:", error);
 
