@@ -13,7 +13,7 @@ import studentRouter from './routes/studentRoutes.ts';
 const app = express();
 
 app.use(cors({
-   origin: "http://localhost:3000",
+   origin: process.env.FRONTEND_URL,
    credentials: true,
 }));
 

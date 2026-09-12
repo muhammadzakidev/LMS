@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { db } from "../db/index.js";
 import { user, session, account, verification, } from "../db/schema/auth-schema.js";
+import { createAuthMiddleware, APIError } from "better-auth/api";
+import { signupSchema } from "../validation/authValidation.js";
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
@@ -16,6 +18,7 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    trustedOrigins: ["http://localhost:3000"],
     user: {
         additionalFields: {
             role: {
@@ -25,5 +28,18 @@ export const auth = betterAuth({
                 input: true,
             },
         },
+    },
+    hooks: {
+        before: createAuthMiddleware(async (ctx) => {
+            if (ctx.path === "/sign-up/email") {
+                const result = signupSchema.safeParse(ctx.body);
+                if (!result.success) {
+                    throw new APIError("BAD_REQUEST", {
+                        message: result.error.issues[0]?.message ??
+                            "Invalid signup data",
+                    });
+                }
+            }
+        }),
     },
 });
