@@ -53,7 +53,7 @@ async function getMyCourse(): Promise<MyCourse[]> {
 export default async function MyCoursePage() {
   const course = await getMyCourse();
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       <div>
         <h1 className="text-3xl font-bold">My Courses</h1>
         <p className="text-muted-foreground">Access the course you enroll in</p>
@@ -101,12 +101,6 @@ export default async function MyCoursePage() {
                   {courses.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1">
-                <p className="text-sm text-muted-foreground">
-                  Enrolled on{" "}
-                  {new Date(courses.enrolledAt).toLocaleDateString()}
-                </p>
-              </CardContent>
               <CardFooter>
                 <Button
                   className="w-full"

@@ -22,6 +22,13 @@
       "when": 1788732374433,
       "tag": "0002_peaceful_marvel_apes",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789138602064,
+      "tag": "0003_magenta_chronomancer",
+      "breakpoints": true
     }
   ]
 }

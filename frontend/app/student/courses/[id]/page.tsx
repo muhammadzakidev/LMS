@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
-import {  BookOpen, PlayCircle } from "lucide-react";
+import { BookOpen, PlayCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import CompleteLessonButton from "@/components/student/completeLessonButton";
+import CertificateButton from "@/components/student/certificateButton";
 interface Lesson {
   id: string;
   moduleId: string;
@@ -13,6 +15,7 @@ interface Lesson {
   position: number;
   createdAt: string;
   updatedAt: string;
+  completed: boolean;
 }
 
 interface Course {
@@ -80,15 +83,15 @@ export default async function StudentCourseDetailPage({
   }
   const { course, modules } = data;
   return (
-    <div className="space-y-8">
-          <Button
-      variant="outline"
-      nativeButton={false}
-      render={<Link href="/student/myCourse" />}
-    >
-      <ArrowLeft className="mr-2 h-4 w-4" />
-      Back to My Courses
-    </Button>
+    <div className="space-y-8 ">
+      <Button
+        variant="outline"
+        nativeButton={false}
+        render={<Link href="/student/myCourse" />}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back to My Courses
+      </Button>
       <div>
         <h1 className="text-3xl font-semibold">{course.title}</h1>
         <p className="mt-2 max-w-3xl text-muted-foreground">
@@ -145,10 +148,24 @@ export default async function StudentCourseDetailPage({
                                   Watch Video
                                 </a>
                               )}
+                              <div className="mt-4">
+                                <CompleteLessonButton
+                                  courseId={course.id}
+                                  lessonId={lesson.id}
+                                  initialCompleted={lesson.completed}
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
                       ))}
+                      <div className="border-t pt-6">
+                        <h2 className="mb-3 text-xl font-semibold">
+                          Certificate
+                        </h2>
+
+                        <CertificateButton courseId={course.id} />
+                      </div>
                     </div>
                   )}
                 </CardContent>

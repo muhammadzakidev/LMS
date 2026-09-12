@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, BookOpen, GraduationCap, LogOut } from "lucide-react";
+
+import { LayoutDashboard, BookOpen, GraduationCap , LogOut} from "lucide-react";
 
 import {
   Sidebar,
@@ -13,25 +14,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
+  SidebarFooter
 } from "@/components/ui/sidebar";
 
 const menuItems = [
   {
     title: "Dashboard",
-    href: "/instructor/dashboard",
+    href: "/student/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Courses",
-    href: "/instructor/courses",
+    title: "Explore Courses",
+    href: "/student/courses",
     icon: BookOpen,
+  },
+  {
+    title: "My Courses",
+    href: "/student/myCourse",
+    icon: GraduationCap,
   },
 ];
 
-export default function AppSidebar() {
+export default function StudentSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/auth/sign-out", {
@@ -52,7 +59,7 @@ export default function AppSidebar() {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="border-b px-4 py-4">
-        <Link href="/instructor/dashboard" className="flex items-center gap-3">
+        <Link href="/student/dashboard" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="h-5 w-5" />
           </div>
@@ -60,38 +67,32 @@ export default function AppSidebar() {
           <div>
             <p className="font-semibold leading-none">LMS</p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
-              Instructor Panel
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Student Panel</p>
           </div>
         </Link>
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
         <SidebarGroup>
-          <SidebarGroupContent className="flex flex-row">
+          <SidebarGroupContent>
             <SidebarMenu className="mt-2 gap-1">
               {menuItems.map((item) => {
                 const Icon = item.icon;
 
                 const isActive =
                   pathname === item.href ||
-                  (item.href === "/instructor/courses" &&
-                    pathname.startsWith("/instructor/courses/"));
+                  (item.href === "/student/courses" &&
+                    pathname.startsWith("/student/courses/"));
 
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
+                      render={<Link href={item.href} />}
                       isActive={isActive}
-                      className="h-11 rounded-lg flex flex-row items-center gap-3 px-3"
+                      className="h-11 rounded-lg"
                     >
-                      <Link
-                        href={item.href}
-                        className="flex flex-row items-center gap-3"
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
+                      <Icon className="h-4 w-4" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
