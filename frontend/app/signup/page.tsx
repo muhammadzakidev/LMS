@@ -25,7 +25,7 @@ export default function SignupPage(){
   const selectedRole = useWatch({control, name: "role"});
   const onSubmit = async (data: SignupInput) =>{
     try {
-      const response = await fetch("http://localhost:5000/api/auth/sign-up/email",
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-up/email`,
       {
         method: "POST",
         headers: {

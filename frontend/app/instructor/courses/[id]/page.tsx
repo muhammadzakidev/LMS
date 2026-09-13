@@ -80,7 +80,7 @@ async function getCourse(id: string): Promise<Course | null> {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/instructor/courses/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${id}`,
       {
         method: "GET",
         headers: {
@@ -108,7 +108,7 @@ async function getModules(courseId: string): Promise<Module[]> {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/instructor/courses/${courseId}/modules`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}/modules`,
       {
         method: "GET",
         headers: {
@@ -139,7 +139,7 @@ async function getLessons(
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/instructor/courses/${courseId}/modules/${moduleId}/lessons`,
+     `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}/modules/${moduleId}/lessons`,
       {
         method: "GET",
         headers: {

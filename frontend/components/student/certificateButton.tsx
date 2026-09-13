@@ -28,7 +28,7 @@ export default function CertificateButton({
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/student/courses/${courseId}/certificate`,
+       `${process.env.NEXT_PUBLIC_API_URL}/api/student/courses/${courseId}/certificate`,
         {
           method: "POST",
           credentials: "include",

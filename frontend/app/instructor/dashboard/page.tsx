@@ -41,7 +41,7 @@ async function getCourses(): Promise<Course[]> {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/instructor/courses",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses`,
       {
         method: "GET",
         headers: {

@@ -41,7 +41,7 @@ export default function StudentSidebar() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/sign-out", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-out`, {
         method: "POST",
         credentials: "include",
       });

@@ -80,7 +80,7 @@ export default function EditCoursePage() {
         setPageError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/instructor/courses/${courseId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}`,
           {
             method: "GET",
             credentials: "include",
@@ -116,7 +116,7 @@ export default function EditCoursePage() {
   const onSubmit = async (data: CreateCourseInput) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/instructor/courses/${courseId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}`,
         {
           method: "PATCH",
           headers: {

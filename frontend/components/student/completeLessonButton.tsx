@@ -19,7 +19,7 @@ export default function CompletionButton({
     try {
         setLoading(true);
         const response = await fetch(
-            `http://localhost:5000/api/student/courses/${courseId}/lessons/${lessonId}/complete`,
+           `${process.env.NEXT_PUBLIC_API_URL}/api/student/courses/${courseId}/lessons/${lessonId}/complete`,
             {
                 method: "POST",
                 credentials: "include",

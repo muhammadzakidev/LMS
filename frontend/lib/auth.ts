@@ -22,7 +22,7 @@ export interface AuthSession {
 export async function getAuthSession(): Promise<AuthSession | null>{
     const cookieStore = await cookies();
     try {
-      const response = await fetch('http://localhost:5000/api/auth/get-session',{
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/get-session`,{
         method: 'GET',
         headers: {
            cookie: cookieStore.toString(),

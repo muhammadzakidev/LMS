@@ -36,7 +36,7 @@ interface CourseResponse {
 async function getMyCourse(): Promise<MyCourse[]> {
   const storeCookies = await cookies();
   try {
-    const response = await fetch("http://localhost:5000/api/student/myCourse", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/student/myCourse`, {
       method: "GET",
       headers: {
         cookie: storeCookies.toString(),

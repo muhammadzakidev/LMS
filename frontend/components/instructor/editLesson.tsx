@@ -67,7 +67,7 @@ export default function EditLesson({
       setIsLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/instructor/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`,
+   `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`,
         {
           method: "PATCH",
 

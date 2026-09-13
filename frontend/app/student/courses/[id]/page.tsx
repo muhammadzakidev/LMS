@@ -51,7 +51,7 @@ async function getCourse(courseId: string): Promise<CourseResponse | null> {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/student/courses/${courseId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/student/courses/${courseId}`,
       {
         method: "GET",
         headers: {

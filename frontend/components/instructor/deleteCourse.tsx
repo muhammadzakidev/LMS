@@ -36,7 +36,7 @@ export default function DeleteCourse({
       setIsLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/instructor/courses/${courseId}`,
+       `${process.env.NEXT_PUBLIC_API_URL}/api/instructor/courses/${courseId}`,
         {
           method: "DELETE",
           credentials: "include",
