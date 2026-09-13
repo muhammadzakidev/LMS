@@ -16,16 +16,19 @@ export const auth = betterAuth({
       user,
       session,
       account,
-      verification
-    }
+      verification,
+    },
   }),
 
   baseURL: process.env.BETTER_AUTH_URL,
 
+  trustedOrigins: [
+    "https://lms-psi-inky.vercel.app",
+  ],
+
   emailAndPassword: {
     enabled: true,
   },
- trustedOrigins: [process.env.FRONTEND_URL!],
 
   user: {
     additionalFields: {
@@ -37,19 +40,20 @@ export const auth = betterAuth({
       },
     },
   },
-  hooks: {
-  before: createAuthMiddleware(async (ctx) => {
-    if (ctx.path === "/sign-up/email") {
-      const result = signupSchema.safeParse(ctx.body);
 
-      if (!result.success) {
-        throw new APIError("BAD_REQUEST", {
-          message:
-            result.error.issues[0]?.message ??
-            "Invalid signup data",
-        });
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === "/sign-up/email") {
+        const result = signupSchema.safeParse(ctx.body);
+
+        if (!result.success) {
+          throw new APIError("BAD_REQUEST", {
+            message:
+              result.error.issues[0]?.message ??
+              "Invalid signup data",
+          });
+        }
       }
-    }
-  }),
-},
+    }),
+  },
 });
