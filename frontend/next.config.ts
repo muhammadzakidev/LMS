@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination:
+          "https://lms-production-a62c.up.railway.app/api/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
