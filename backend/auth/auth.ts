@@ -24,7 +24,7 @@ export const auth = betterAuth({
 
   trustedOrigins: [
     "https://lms-psi-inky.vercel.app",
-     "https://lms-git-main-muhammadzakidevs-projects.vercel.app",
+    "https://lms-git-main-muhammadzakidevs-projects.vercel.app",
   ],
 
   emailAndPassword: {
