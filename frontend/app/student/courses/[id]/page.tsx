@@ -115,7 +115,7 @@ export default async function StudentCourseDetailPage({
               <Card key={module.id}>
                 <CardHeader>
                   <CardTitle>
-                    Module {module.position}: {module.title}
+                    Module {module.title}: {module.position}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
